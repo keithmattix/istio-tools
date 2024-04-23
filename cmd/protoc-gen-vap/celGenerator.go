@@ -34,11 +34,25 @@ var (
 	}
 )
 
+type fieldType string
+
+var (
+	fieldTypePrimitive fieldType = "primitive"
+	fieldTypeMap       fieldType = "map"
+	fieldTypeList      fieldType = "list"
+)
+
+type fieldKey struct {
+	name      string
+	fieldType bool
+}
+
 type celGenerator struct {
 	model    *protomodel.Model
 	messages map[string]*protomodel.MessageDescriptor
 	// transient state as individual files are processed
-	currentPackage *protomodel.PackageDescriptor
+	currentPackage       *protomodel.PackageDescriptor
+	currentFieldPathTree map[fieldKey]any // the value type here is really a nested map of fieldKeys
 }
 
 func newCelGenerator(model *protomodel.Model) *celGenerator {
